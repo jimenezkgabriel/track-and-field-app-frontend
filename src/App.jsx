@@ -14,7 +14,7 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${API_BASE}/hello`);
+      const res = await fetch(`${API_BASE}/users`);
       console.log('Response:', res)
       const data = await res.json();
       setData(data.message)
