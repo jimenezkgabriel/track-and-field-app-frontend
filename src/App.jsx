@@ -1,10 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [data, setData] = useState('This is blank')
+
+  // In dev, force the Vite proxy to avoid CORS.
+  const API_BASE = import.meta.env.DEV
+    ? '/api'
+    : (import.meta.env.VITE_API_URL ?? '/api');
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/hello`);
+      console.log('Response:', res)
+      const data = await res.json();
+      setData(data.message)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, []);
 
   return (
     <>
@@ -17,6 +38,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <h1>{data}</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
