@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import RegisterForm from './components/RegisterForm.jsx'
+import LoginForm from './components/LoginForm.jsx'
+import HundredMeterForm from './components/HundredMeterForm.jsx'
+import HundredMeterList from './components/HundredMeterList.jsx'
 import './App.css'
 
 function App() {
@@ -41,6 +44,9 @@ function App() {
       <h1>Vite + React</h1>
       <h1>{data}</h1>
       <RegisterForm />
+      <LoginForm />
+      <HundredMeterForm />
+      <HundredMeterList />
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}

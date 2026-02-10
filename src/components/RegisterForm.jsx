@@ -1,8 +1,5 @@
-import axios from "axios";
+import { postApi } from "../lib/api";
 const RegisterForm = () => {
-    const API_BASE = import.meta.env.DEV
-    ? '/api'
-    : (import.meta.env.VITE_API_URL ?? '/api');
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -10,7 +7,7 @@ const RegisterForm = () => {
         const data = Object.fromEntries(formData.entries());
         console.log('Form Data:', data);
         // Here you would typically send the data to your backend API.
-        axios.post(`${API_BASE}/users/register`, data)
+        postApi(`users/register`, data)
             .then(response => {
                 console.log('Registration successful:', response.data);
             })
