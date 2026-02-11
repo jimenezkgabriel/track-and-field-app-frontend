@@ -10,6 +10,24 @@ const api = axios.create({
     headers: { "Content-Type": "application/json" }
 });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error?.response?.status;
+        const requestUrl = error?.config?.url ?? '';
+        const isAuthRequest = requestUrl.includes('users/login') || requestUrl.includes('users/register');
+
+        if ((status === 401 || status === 403) && !isAuthRequest) {
+            // Clear auth state and force a fresh login view.
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.setItem('sessionExpired', '1');
+            window.location.assign('/');
+        }
+        return Promise.reject(error);
+    }
+);
+
 const getApi = (endpoint, token = '') => {
     return api.get(endpoint, {
         headers: {
