@@ -6,11 +6,11 @@ import logo from '../assets/logo.png'
 
 const Navbar = () => {
   const navigate = useNavigate()
-  const { token, setToken, setUserId } = useAppContext()
+  const { token, setToken, setUser } = useAppContext()
 
   const handleLogout = () => {
     setToken(null)
-    setUserId(null)
+    setUser(null)
     navigate('/')
   }
 

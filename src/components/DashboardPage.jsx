@@ -2,7 +2,7 @@ import { Box, Container, Typography } from '@mui/material'
 import { useAppContext } from '../utils/AppContext.jsx'
 
 const DashboardPage = () => {
-    const { token } = useAppContext()
+    const { token, user } = useAppContext()
 
     return (
         <Box
@@ -18,6 +18,11 @@ const DashboardPage = () => {
             <Container maxWidth="md">
                 <Typography variant="h1" sx={{ mb: 4, fontSize: { xs: '2rem', md: '3rem' } }}>
                     {token || 'No token available'}
+                </Typography>
+                <Typography variant="h4">
+                    <ul>
+                    {user?.eventsInvolved.includes('100m') && <li>100m Dash</li>}
+                    </ul>
                 </Typography>
             </Container>
         </Box>

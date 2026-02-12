@@ -4,7 +4,15 @@ export const useLocalStorage = (key, initialValue) => {
     const [value, setValue] = useState(() => {
         try {
             const stored = localStorage.getItem(key)
-            return stored !== null ? stored : initialValue
+            if (stored !== null) {
+                try {
+                    return JSON.parse(stored)
+                } catch {
+                    // If parsing fails, return the raw value
+                    return stored
+                }
+            }
+            return initialValue
         } catch (error) {
             console.warn(`Error reading localStorage key "${key}":`, error)
             return initialValue
@@ -14,7 +22,8 @@ export const useLocalStorage = (key, initialValue) => {
     useEffect(() => {
         try {
             if (value !== null && value !== undefined) {
-                localStorage.setItem(key, value)
+                const valueToStore = typeof value === 'string' ? value : JSON.stringify(value)
+                localStorage.setItem(key, valueToStore)
             } else {
                 localStorage.removeItem(key)
             }

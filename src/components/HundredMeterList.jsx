@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import { useAppContext } from "../utils/AppContext.jsx";
 
 const HundredMeterList = () => {
-    const { userId, token } = useAppContext();
+    const { token } = useAppContext();
     const [records, setRecords] = useState([]);
     const [javelinTosses, setJavelinTosses] = useState([]);
 
     useEffect(() => {
-        if (!userId) return;
+        if (!token) return;
         getApi(`hundred-meter/`, token)
             .then(response => {
                 console.log('Records fetched successfully:', response.data);
@@ -27,7 +27,7 @@ const HundredMeterList = () => {
             .catch(error => {
                 console.error('Error fetching javelin tosses:', error);
             });
-    }, [userId, token]);
+    }, [token]);
 
     const handleDelete = (recordId) => {
         deleteApi(`hundred-meter/delete/${recordId}`, token)

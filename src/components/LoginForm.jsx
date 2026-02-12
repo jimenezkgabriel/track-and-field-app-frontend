@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { postApi } from '../lib/api.js'
 import { useAppContext } from '../utils/AppContext.jsx'
 import { useFormSubmit } from '../hooks/useFormSubmit.js'
+import { useEffect } from 'react'
 
 const LoginForm = () => {
     const navigate = useNavigate()
-    const { setUserId, setToken, setSessionExpired } = useAppContext()
+    const { user, setUser, setToken, setSessionExpired } = useAppContext()
     const { errors, generalError, loading, setLoading, handleFieldChange, handleError, resetErrors } = useFormSubmit()
 
     const handleSubmit = async (e) => {
@@ -20,7 +21,9 @@ const LoginForm = () => {
         try {
             const { data } = await postApi(`users/login`, payload)
             console.log('Login successful:', data)
-            setUserId(data.user._id)
+            console.log('data.user:', data.user)
+            const { username, eventsInvolved } = data.user
+            setUser({ username, eventsInvolved })
             setToken(data.token)
             setSessionExpired(false)
             navigate('/dashboard')

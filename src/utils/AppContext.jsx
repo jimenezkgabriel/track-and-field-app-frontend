@@ -4,7 +4,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage.js";
 const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
-    const [userId, setUserId] = useLocalStorage('userId', null);
+    const [user, setUser] = useLocalStorage('user', null);
     const [token, setToken] = useLocalStorage('token', null);
     const [sessionExpiredValue, setSessionExpiredValue] = useLocalStorage('sessionExpired', '0');
 
@@ -32,10 +32,10 @@ export const AppProvider = ({ children }) => {
         if (!token) return;
         if (isTokenExpired(token)) {
             setToken(null);
-            setUserId(null);
+            setUser(null);
             setSessionExpired(true);
         }
-    }, [token, setToken, setUserId, setSessionExpired]);
+    }, [token, setToken, setUser, setSessionExpired]);
 
     useEffect(() => {
         if (token && sessionExpired) {
@@ -44,8 +44,8 @@ export const AppProvider = ({ children }) => {
     }, [token, sessionExpired, setSessionExpired]);
 
     const value = useMemo(
-        () => ({ userId, setUserId, token, setToken, sessionExpired, setSessionExpired }),
-        [userId, token, sessionExpired, setUserId, setToken, setSessionExpired]
+        () => ({ user, setUser, token, setToken, sessionExpired, setSessionExpired }),
+        [user, token, sessionExpired, setUser, setToken, setSessionExpired]
     );
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

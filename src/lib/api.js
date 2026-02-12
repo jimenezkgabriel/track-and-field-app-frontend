@@ -20,7 +20,7 @@ api.interceptors.response.use(
         if ((status === 401 || status === 403) && !isAuthRequest) {
             // Clear auth state and force a fresh login view.
             localStorage.removeItem('token');
-            localStorage.removeItem('userId');
+            localStorage.removeItem('user');
             localStorage.setItem('sessionExpired', '1');
             window.location.assign('/');
         }
