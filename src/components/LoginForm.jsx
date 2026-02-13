@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 
 const LoginForm = () => {
     const navigate = useNavigate()
-    const { user, setUser, setToken, setSessionExpired } = useAppContext()
+    const { setUser, setToken, setSessionExpired } = useAppContext()
     const { errors, generalError, loading, setLoading, handleFieldChange, handleError, resetErrors } = useFormSubmit()
 
     const handleSubmit = async (e) => {
@@ -22,8 +22,8 @@ const LoginForm = () => {
             const { data } = await postApi(`users/login`, payload)
             console.log('Login successful:', data)
             console.log('data.user:', data.user)
-            const { username, eventsInvolved } = data.user
-            setUser({ username, eventsInvolved })
+            const { username, eventsInvolved, createdAt } = data.user
+            setUser({ username, eventsInvolved, createdAt })
             setToken(data.token)
             setSessionExpired(false)
             navigate('/dashboard')
