@@ -1,8 +1,11 @@
 import { Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 import { useAppContext } from '../utils/AppContext.jsx'
+import Weather from './Weather.jsx'
 
 const DashboardPage = () => {
+    const navigate = useNavigate()
     const { user } = useAppContext()
     const events = user?.eventsInvolved ?? []
     const eventLabelMap = {
@@ -21,21 +24,22 @@ const DashboardPage = () => {
         return eventLabelMap[normalized] ?? rawLabel
     }
 
+    const handleEventClick = (label) => {
+        if (label === '100 Meter Sprint') {
+            navigate('/hundred-meter')
+        }
+        if (label === 'Javelin Toss') {
+            navigate('/javelin-toss')
+        }
+        if (label === 'Long Jump') {
+            // navigate('/long-jump')
+            alert('Long Jump page coming soon!')
+        }
+    }
+
     return (
         <Box sx={{ width: '100%' }}>
-            <Box
-                sx={{
-                    width: '100%',
-                    borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-                    backgroundColor: 'background.paper',
-                }}
-            >
-                <Container maxWidth={false} sx={{ py: 1.5 }}>
-                    <Typography variant="body2" color="text.secondary">
-                        Weather API placeholder
-                    </Typography>
-                </Container>
-            </Box>
+            <Weather />
 
             <Container maxWidth="lg" sx={{ py: { xs: 2, md: 3 } }}>
                 <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 2.5 }}>
@@ -63,32 +67,28 @@ const DashboardPage = () => {
                             justifyContent={{ xs: 'center', md: 'flex-start' }}
                             sx={{ height: '100%' }}
                         >
-                            {events.length > 0
-                                ? events.map((event, index) => {
-                                    const label = getEventLabel(event, index)
+                            {events.map((event, index) => {
+                                const label = getEventLabel(event, index)
 
-                                    return (
-                                        <Button
-                                            key={`${label}-${index}`}
-                                            variant="contained"
-                                            sx={{
-                                                width: 88,
-                                                height: 88,
-                                                borderRadius: '50%',
-                                                p: 0,
-                                                fontSize: '0.9rem',
-                                                textTransform: 'none',
-                                            }}
-                                        >
-                                            {label}
-                                        </Button>
-                                    )
-                                })
-                                : (
-                                    <Typography variant="body2" color="text.secondary">
-                                        Add event buttons here
-                                    </Typography>
-                                )}
+                                return (
+                                    <Button
+                                        key={`${label}-${index}`}
+                                        variant="contained"
+                                        onClick={() => handleEventClick(label)}
+                                        sx={{
+                                            width: 88,
+                                            height: 88,
+                                            borderRadius: '50%',
+                                            p: 0,
+                                            fontSize: '0.9rem',
+                                            textTransform: 'none',
+                                        }}
+                                    >
+                                        {label}
+                                    </Button>
+                                )
+                            })
+                            }
                             <Button
                                 aria-label="Add event"
                                 variant="outlined"
@@ -107,6 +107,17 @@ const DashboardPage = () => {
                         </Stack>
                     </Grid>
                 </Grid>
+
+                <Stack spacing={2} sx={{ mb: 3 }}>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={() => navigate('/javelin-toss')}
+                        sx={{ alignSelf: 'flex-start' }}
+                    >
+                        [DEV] Go to Javelin Toss
+                    </Button>
+                </Stack>
 
                 <Grid container spacing={{ xs: 2, md: 3 }}>
                     <Grid size={{ xs: 12, md: 8 }}>

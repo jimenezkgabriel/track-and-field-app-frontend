@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo } from 'react'
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
-import { orange, blue } from '@mui/material/colors'
+import { orange, blue, red, yellow } from '@mui/material/colors'
 import { useLocalStorage } from '../hooks/useLocalStorage.js'
 
 const ThemeContext = createContext(null)
@@ -15,6 +15,9 @@ export const MuiThemeProvider = ({ children }) => {
           mode,
           primary: {
             main: mode === 'dark' ? orange[900] : blue[500],
+          },
+          error: {
+            main: mode === 'dark' ? yellow[500] : red[500],
           },
         },
       }),

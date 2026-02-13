@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom'
 import LoginPage from './components/LoginPage.jsx'
 import RegisterPage from './components/RegisterPage.jsx'
 import DashboardPage from './components/DashboardPage.jsx'
+import HundredMeterPage from './components/HundredMeterPage.jsx'
+import JavelinTossPage from './components/JavelinTossPage.jsx'
 import Navbar from './components/Navbar.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
@@ -15,6 +17,8 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/hundred-meter" element={<HundredMeterPage />} />
+          <Route path="/javelin-toss" element={<JavelinTossPage />} />
         </Route>
       </Routes>
     </Box>
