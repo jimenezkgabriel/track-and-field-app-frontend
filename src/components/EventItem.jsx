@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete }) => {
 	const createdLabel = createdAt ? new Date(createdAt).toLocaleString() : null;
 	const editedLabel = updatedAt ? new Date(updatedAt).toLocaleString() : null;
+	const showEdited = Boolean(createdAt && updatedAt && updatedAt !== createdAt);
 
 	return (
 		<Paper
@@ -35,8 +36,7 @@ const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete
 					{(createdLabel || editedLabel) && (
 						<Typography variant="caption" color="text.secondary">
 							{createdLabel && `Created: ${createdLabel}`}
-							{createdLabel && editedLabel ? ' • ' : ''}
-							{editedLabel && `Edited: ${editedLabel}`}
+							{showEdited ? ` • Edited: ${editedLabel}` : ''}
 						</Typography>
 					)}
 				</Stack>

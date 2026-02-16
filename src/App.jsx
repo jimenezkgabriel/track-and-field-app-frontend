@@ -5,6 +5,7 @@ import RegisterPage from './components/RegisterPage.jsx'
 import DashboardPage from './components/DashboardPage.jsx'
 import HundredMeterPage from './components/HundredMeterPage.jsx'
 import JavelinTossPage from './components/JavelinTossPage.jsx'
+import LongJumpPage from './components/LongJumpPage.jsx'
 import Navbar from './components/Navbar.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
@@ -18,6 +19,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/hundred-meter" element={<HundredMeterPage />} />
+          <Route path="/long-jump" element={<LongJumpPage />} />
           <Route path="/javelin-toss" element={<JavelinTossPage />} />
         </Route>
       </Routes>
