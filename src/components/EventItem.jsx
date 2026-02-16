@@ -7,6 +7,7 @@ const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete
 	const createdLabel = createdAt ? new Date(createdAt).toLocaleString() : null;
 	const editedLabel = updatedAt ? new Date(updatedAt).toLocaleString() : null;
 	const showEdited = Boolean(createdAt && updatedAt && updatedAt !== createdAt);
+	const showActions = Boolean(onEdit || onDelete);
 
 	return (
 		<Paper
@@ -40,6 +41,7 @@ const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete
 						</Typography>
 					)}
 				</Stack>
+			{showActions && (
 				<Stack
 					direction="row"
 					spacing={1}
@@ -52,6 +54,7 @@ const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete
 						Delete
 					</Button>
 				</Stack>
+			)}
 			</Stack>
 		</Paper>
 	);
