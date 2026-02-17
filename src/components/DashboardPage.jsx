@@ -171,7 +171,6 @@ const DashboardPage = () => {
     return (
         <Box sx={{ width: '100%' }}>
             <Weather />
-
             <Container maxWidth="lg" sx={{ py: { xs: 2, md: 3 } }}>
                 <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 2.5 }}>
                     <Grid size={{ xs: 12, md: 3 }}>

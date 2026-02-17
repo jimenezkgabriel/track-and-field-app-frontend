@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEvents } from '../hooks/useEvents.js'
 import RecordForm from './RecordForm.jsx'
 import EventList from './EventList.jsx'
+import Weather from './Weather.jsx'
 
 const LongJumpPage = () => {
     const navigate = useNavigate()
@@ -23,6 +24,7 @@ const LongJumpPage = () => {
 
     return (
         <Box sx={{ width: '100%' }}>
+            <Weather />
             <Container maxWidth="lg" sx={{ py: { xs: 2, md: 3 } }}>
                 <Stack spacing={3}>
                     <Button
