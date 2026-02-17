@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Box, Chip, Container, Stack, Typography } from '@mui/material'
 import { getApi } from '../lib/api.js';
 
-const WEATHER_API_URL = 'https://api.open-meteo.com/v1/forecast?latitude=34.0234&longitude=-84.6155&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto'
+const DEFAULT_COORDS = { latitude: 34.0234, longitude: -84.6155 };
+const buildWeatherUrl = (latitude, longitude) =>
+    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto`;
 const WEATHER_CODE_LABELS = {
     0: 'Clear',
     1: 'Mainly clear',
@@ -40,11 +42,12 @@ const formatDate = () => new Date().toLocaleDateString([], { weekday: 'short', m
 const Weather = () => {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [locationError, setLocationError] = useState(null);
 
     useEffect(() => {
-        const fetchWeather = async () => {
+        const fetchWeather = async (coords) => {
             try {
-                const { data } = await getApi(WEATHER_API_URL);
+                const { data } = await getApi(buildWeatherUrl(coords.latitude, coords.longitude));
                 const weatherData = {
                     time: formatTime(),
                     date: formatDate(),
@@ -57,9 +60,32 @@ const Weather = () => {
             } finally {
                 setLoading(false);
             }
+        };
+
+        setLoading(true);
+        setLocationError(null);
+
+        if (!navigator.geolocation) {
+            setLocationError('Location unavailable, using default');
+            fetchWeather(DEFAULT_COORDS);
+            return;
         }
 
-        fetchWeather();
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const { latitude, longitude } = pos.coords;
+                fetchWeather({ latitude, longitude });
+            },
+            () => {
+                setLocationError('Location blocked, using default');
+                fetchWeather(DEFAULT_COORDS);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000,
+            }
+        );
     }, []);
 
     return (
@@ -77,6 +103,13 @@ const Weather = () => {
                     justifyContent="space-between"
                 >
                     <Stack spacing={0.5}>
+                        {locationError && (
+                            <Chip
+                                label="Error fetching location. Reverting to secret default location"
+                                color="error"
+                                variant="filled"
+                            />
+                        )}
                         <Typography variant="overline" color="text.secondary">
                             Local Weather
                         </Typography>
