@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { postApi } from '../lib/api.js'
 import { useAppContext } from '../utils/AppContext.jsx'
 import { useFormSubmit } from '../hooks/useFormSubmit.js'
-import { useEffect } from 'react'
 
 const LoginForm = () => {
     const navigate = useNavigate()

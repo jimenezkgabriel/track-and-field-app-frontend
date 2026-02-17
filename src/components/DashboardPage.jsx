@@ -21,10 +21,12 @@ import { useNavigate } from 'react-router-dom'
 import { LineChart } from '@mui/x-charts/LineChart'
 
 import { useAppContext } from '../utils/AppContext.jsx'
-import { putApi } from '../lib/api.js'
+import { postApi, putApi, getApi, deleteApi } from '../lib/api.js'
 import { useEvents } from '../hooks/useEvents.js'
 import Weather from './Weather.jsx'
 import EventList from './EventList.jsx'
+import DateForm from './DateForm.jsx'
+import DateList from './DateList.jsx'
 
 const DashboardPage = () => {
     const navigate = useNavigate()
@@ -42,10 +44,17 @@ const DashboardPage = () => {
         events: javelinEvents,
         loading: javelinLoading,
     } = useEvents('/javelin-toss/')
+    const {
+        events: upcomingEvents,
+        loading: upcomingEventsLoading,
+        refetch: refetchUpcomingEvents,
+    } = useEvents('/calendars/')
     const [eventDialogOpen, setEventDialogOpen] = useState(false)
+    const [datePickerOpen, setDatePickerOpen] = useState(false)
     const [selectedEvents, setSelectedEvents] = useState([])
     const [isSavingEvents, setIsSavingEvents] = useState(false)
     const [eventsError, setEventsError] = useState('')
+    const [upcomingEventsError, setUpcomingEventsError] = useState('')
     const eventLabelMap = {
         '100 meter sprint': '100 Meter Sprint',
         'long jump': 'Long Jump',
@@ -104,13 +113,6 @@ const DashboardPage = () => {
     const showHundredMeter = involvedEventSet.has('100 meter sprint')
     const showLongJump = involvedEventSet.has('long jump')
     const showJavelinToss = involvedEventSet.has('javelin toss')
-    const visibleChartCount = [showHundredMeter, showLongJump, showJavelinToss].filter(Boolean).length
-    const chartItemSx = {
-        flexGrow: 1,
-        flexBasis: visibleChartCount > 0 ? `${100 / visibleChartCount}%` : '100%',
-        minWidth: 0,
-    }
-    const recordsColumnSize = visibleChartCount > 0 ? Math.floor(12 / visibleChartCount) : 12
 
     const getEventLabel = (event, index) => {
         const rawLabel = typeof event === 'string' ? event : event?.name ?? `Event ${index + 1}`
@@ -144,6 +146,48 @@ const DashboardPage = () => {
         setEventsError('')
     }
 
+    const handleDatePickerSubmit = async (payload) => {
+        try {
+            const response = await postApi('calendars/create', payload, token);
+            console.log('Event created successfully:', response.data);
+            await refetchUpcomingEvents();
+        } catch (error) {
+            console.error('Error creating event:', error)
+            setUpcomingEventsError('Error creating event. Please try again.')
+            throw error
+        }
+    }
+
+    const handleDatePickerEdit = async (eventId, payload) => {
+        try {
+            const response = await putApi(`calendars/update/${eventId}`, payload, token);
+            console.log('Event updated successfully:', response.data);
+            await refetchUpcomingEvents();
+        } catch (error) {
+            console.error('Error updating event:', error)
+            throw error
+        }
+    }
+
+    const handleDatePickerDelete = async (eventId) => {
+        try {
+            await deleteApi(`calendars/delete/${eventId}`, token);
+            console.log('Event deleted successfully');
+            await refetchUpcomingEvents();
+        } catch (error) {
+            console.error('Error deleting event:', error)
+        }
+    }
+
+    const handleDatePickerOpen = () => {
+        setDatePickerOpen(true)
+    }
+
+    const handleDatePickerClose = () => {
+        setDatePickerOpen(false)
+        setUpcomingEventsError('')
+    }
+
     const handleEventToggle = (value) => {
         if (eventsError) {
             setEventsError('')
@@ -166,6 +210,17 @@ const DashboardPage = () => {
         } finally {
             setIsSavingEvents(false)
         }
+    }
+
+    const layoutSx = {
+        equalWidthColumn: {
+            flex: { xs: '1 1 100%', md: '1 1 0' },
+            minWidth: 0,
+        },
+        responsiveRow: {
+            direction: { xs: 'column', md: 'row' },
+            spacing: { xs: 2, md: 3 },
+        },
     }
 
     return (
@@ -244,14 +299,18 @@ const DashboardPage = () => {
                         <Paper elevation={12} sx={{ p: { xs: 2, md: 2.5 }, minHeight: 240, borderRadius: 8 }}>
                             <Stack spacing={2}>
                                 <Typography variant="subtitle1">Progress report</Typography>
-                                <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} sx={{ width: '100%' }}>
+                                <Stack
+                                    spacing={2}
+                                    direction={layoutSx.responsiveRow.direction}
+                                    sx={{ width: '100%' }}
+                                >
                                     {!showHundredMeter && !showLongJump && !showJavelinToss && (
                                         <Typography variant="body2" color="text.secondary">
                                             Select events to see progress charts.
                                         </Typography>
                                     )}
                                     {showHundredMeter && (
-                                        <Stack spacing={1.5} sx={chartItemSx}>
+                                        <Stack spacing={1.5} sx={layoutSx.equalWidthColumn}>
                                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                 100 Meter Sprint
                                             </Typography>
@@ -280,7 +339,7 @@ const DashboardPage = () => {
                                     )}
 
                                     {showLongJump && (
-                                        <Stack spacing={1.5} sx={chartItemSx}>
+                                        <Stack spacing={1.5} sx={layoutSx.equalWidthColumn}>
                                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                 Long Jump
                                             </Typography>
@@ -309,7 +368,7 @@ const DashboardPage = () => {
                                     )}
 
                                     {showJavelinToss && (
-                                        <Stack spacing={1.5} sx={chartItemSx}>
+                                        <Stack spacing={1.5} sx={layoutSx.equalWidthColumn}>
                                             <Typography variant="body1" sx={{ fontWeight: 600 }}>
                                                 Javelin Toss
                                             </Typography>
@@ -342,15 +401,33 @@ const DashboardPage = () => {
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
                         <Paper elevation={12} sx={{ p: { xs: 2, md: 2.5 }, minHeight: 240, borderRadius: 8 }}>
-                            <Typography variant="subtitle1">Upcoming events placeholder</Typography>
+                            <Stack spacing={1.5} direction={"row"} alignItems="center" justifyContent="space-between">
+                                <Typography variant="subtitle1">Upcoming Events</Typography>
+                                <Button variant="contained" onClick={handleDatePickerOpen}>
+                                    Create New Event
+                                </Button>
+                            </Stack>
+                            <Stack spacing={2} mt={2}>
+                                <DateList
+                                    events={upcomingEvents}
+                                    loading={upcomingEventsLoading}
+                                    submitLabel="Update Event"
+                                    editEvent={handleDatePickerEdit}
+                                    deleteEvent={handleDatePickerDelete}
+                                />
+                            </Stack>
                         </Paper>
                     </Grid>
                 </Grid>
 
                 {(showHundredMeter || showLongJump || showJavelinToss) && (
-                    <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mt: 2.5 }}>
+                    <Stack
+                        direction={layoutSx.responsiveRow.direction}
+                        spacing={layoutSx.responsiveRow.spacing}
+                        sx={{ mt: 2.5 }}
+                    >
                         {showHundredMeter && (
-                            <Grid size={{ xs: 12, md: recordsColumnSize }}>
+                            <Box sx={layoutSx.equalWidthColumn}>
                                 <Paper elevation={12} sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 8 }}>
                                     <Stack spacing={2}>
                                         <Typography variant="h6">100 Meter Sprint</Typography>
@@ -361,10 +438,10 @@ const DashboardPage = () => {
                                         />
                                     </Stack>
                                 </Paper>
-                            </Grid>
+                            </Box>
                         )}
                         {showLongJump && (
-                            <Grid size={{ xs: 12, md: recordsColumnSize }}>
+                            <Box sx={layoutSx.equalWidthColumn}>
                                 <Paper elevation={12} sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 8 }}>
                                     <Stack spacing={2}>
                                         <Typography variant="h6">Long Jump</Typography>
@@ -375,10 +452,10 @@ const DashboardPage = () => {
                                         />
                                     </Stack>
                                 </Paper>
-                            </Grid>
+                            </Box>
                         )}
                         {showJavelinToss && (
-                            <Grid size={{ xs: 12, md: recordsColumnSize }}>
+                            <Box sx={layoutSx.equalWidthColumn}>
                                 <Paper elevation={12} sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 8 }}>
                                     <Stack spacing={2}>
                                         <Typography variant="h6">Javelin Toss</Typography>
@@ -389,11 +466,35 @@ const DashboardPage = () => {
                                         />
                                     </Stack>
                                 </Paper>
-                            </Grid>
+                            </Box>
                         )}
-                    </Grid>
+                    </Stack>
                 )}
             </Container>
+
+            <Dialog
+                open={datePickerOpen}
+                onClose={handleDatePickerClose}
+                maxWidth="xs"
+                fullWidth
+                slotProps={{
+                    Paper: {
+                        sx: { borderRadius: 2 },
+                    },
+                }}
+            >
+                <DialogTitle sx={{ fontWeight: 600 }}>Create Upcoming Event</DialogTitle>
+                <DialogContent sx={{ pt: 1 }}>
+                    <DateForm
+                        onSubmit={handleDatePickerSubmit}
+                        onSuccess={handleDatePickerClose}
+                        onCancel={handleDatePickerClose}
+                        submitLabel="Create Event"
+                        errorMessage={upcomingEventsError}
+                        errorClear={() => setUpcomingEventsError('')}
+                    />
+                </DialogContent>
+            </Dialog>
 
             <Dialog
                 open={eventDialogOpen}

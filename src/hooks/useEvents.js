@@ -17,10 +17,10 @@ export const useEvents = (endpoint) => {
         try {
             const response = await api.getApi(endpoint, token);
             const data = response.data;
-            
+
             // Add artificial delay to see loading spinner (remove in production)
             await new Promise(resolve => setTimeout(resolve, 1500));
-            
+
             // Handle response format: {message, record} or array
             if (Array.isArray(data)) {
                 setEvents(data);

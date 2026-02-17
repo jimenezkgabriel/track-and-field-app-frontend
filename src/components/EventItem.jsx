@@ -17,7 +17,7 @@ const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete
 				display: 'flex',
 				flexDirection: 'column',
 				gap: 1.5,
-                borderRadius: 8,
+				borderRadius: 8,
 			}}
 		>
 			<Stack
@@ -41,20 +41,20 @@ const EventItem = ({ record, description, createdAt, updatedAt, onEdit, onDelete
 						</Typography>
 					)}
 				</Stack>
-			{showActions && (
-				<Stack
-					direction="row"
-					spacing={1}
-					sx={{ flexShrink: 0, justifyContent: { xs: 'space-between', sm: 'auto' } }}
-				>
-					<Button variant="outlined" onClick={onEdit} disabled={!onEdit} sx={{ borderRadius: 4 }}>
-						Edit
-					</Button>
-					<Button variant="contained" color="error" onClick={onDelete} disabled={!onDelete} sx={{ borderRadius: 4 }}>
-						Delete
-					</Button>
-				</Stack>
-			)}
+				{showActions && (
+					<Stack
+						direction="row"
+						spacing={1}
+						sx={{ flexShrink: 0, justifyContent: { xs: 'space-between', sm: 'auto' } }}
+					>
+						<Button variant="outlined" onClick={onEdit} disabled={!onEdit} sx={{ borderRadius: 4 }}>
+							Edit
+						</Button>
+						<Button variant="contained" color="error" onClick={onDelete} disabled={!onDelete} sx={{ borderRadius: 4 }}>
+							Delete
+						</Button>
+					</Stack>
+				)}
 			</Stack>
 		</Paper>
 	);
