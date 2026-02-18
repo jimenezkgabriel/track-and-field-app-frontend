@@ -61,7 +61,7 @@ A simple web app for athletes to keep track of their track and field stats
 * [Backend Github Repository](https://github.com/jimenezkgabriel/track-and-field-app-backend)
 
 ## <a name="author"></a>About The Author
-Per Scholas student just trying to learn the foundations of the MERN stack. Bottom text.
+Solution and detail oriented software engineer undegraduate looking to expand their skill set, elevate their career, and grow as a person. It has been a long time coming here in Per Scholas from start to finish. Always wanted to learn the MERN stack and through a series of opportunities, I have been led to Per Scholas. There is still so, so, so much to learn I hope those learning opportunities come my way from this tenure.
     
 ## Works Cited:
 * [React Docs](https://react.dev/learn)
